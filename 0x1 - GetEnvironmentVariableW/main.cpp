@@ -6,8 +6,8 @@ void WhoIsWho();
 
 int main()
 {
-    setlocale(LC_ALL, "");
-    WhoIsWho();
+    	setlocale(LC_ALL, "");
+    	WhoIsWho();
 	return 0;
 }
 
@@ -19,5 +19,5 @@ void WhoIsWho()
 	GetEnvironmentVariableW(L"USERNAME", username, size);
 	DWORD dw = GetLastError();
 	std::wcout << username << std::endl;
-    return;
+    	return;
 }

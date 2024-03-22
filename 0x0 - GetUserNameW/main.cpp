@@ -6,8 +6,8 @@ void WhoIsWho();
 
 int main()
 {
-    setlocale(LC_ALL, "");
-    WhoIsWho();
+    	setlocale(LC_ALL, "");
+    	WhoIsWho();
 	return 0;
 }
 
@@ -18,6 +18,6 @@ void WhoIsWho()
 	GetUserNameW(NULL, &size);
 	username = (LPWSTR)malloc(size + 1);
 	GetUserNameW(username, &size);
-    std::wcout << username << std::endl;
-    return;
+    	std::wcout << username << std::endl;
+    	return;
 }
