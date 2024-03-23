@@ -22,22 +22,28 @@ void WhoIsWho()
     hr = CoInitialize(NULL);
 
     IADsWinNTSystemInfo* pNtSys;
-    hr = CoCreateInstance(CLSID_ADSystemInfo,
+    hr = CoCreateInstance(
+        CLSID_ADSystemInfo,
         NULL,
         CLSCTX_INPROC_SERVER,
         IID_IADsADSystemInfo,
-        (void**)&pNtSys);
+        (void**)&pNtSys
+    );
 
     BSTR bstr;
     hr = pNtSys->get_UserName(&bstr);
-    if (SUCCEEDED(hr)) {
+    
+    if (SUCCEEDED(hr))
+    {
         std::wcout << bstr << std::endl;
         SysFreeString(bstr);
     }
 
-    if (pNtSys) {
+    if (pNtSys)
+    {
         pNtSys->Release();
     }
 
     CoUninitialize();
+    return;
 }

@@ -24,7 +24,8 @@ void WhoIsWho()
         sessionId,
         WTSUserName, 
         &pUserName, 
-        &size)) { 
+        &size))
+    { 
 
         std::wcout << pUserName << std::endl;
 

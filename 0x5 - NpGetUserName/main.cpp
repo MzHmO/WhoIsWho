@@ -6,9 +6,9 @@ void WhoIsWho();
 
 int main()
 {
-    setlocale(LC_ALL, "");
-    WhoIsWho();
-    return 0;
+	setlocale(LC_ALL, "");
+	WhoIsWho();
+	return 0;
 }
 
 DWORD ThreadStartRoutine(LPVOID lpParameter);
@@ -28,35 +28,67 @@ void WhoIsWho()
 	DWORD dwRead = 0;
 
 	hMod = LoadLibraryW(L"advapi32.dll");
+	
 	if (hMod == NULL)
 		goto EXIT_ROUTINE;
 
-	NpGetUserName = (NPGETUSERNAME)GetProcAddress(hMod, "NpGetUserName");
+	NpGetUserName = (NPGETUSERNAME)GetProcAddress(
+		hMod, 
+		"NpGetUserName");
+
 	if (!NpGetUserName)
 		goto EXIT_ROUTINE;
 
-	hNamedPipe = CreateNamedPipeW(L"\\\\.\\pipe\\LOCAL\\usernamepipe", PIPE_ACCESS_DUPLEX, PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT, PIPE_UNLIMITED_INSTANCES, 256, 256, 0, NULL);
+	hNamedPipe = CreateNamedPipeW(
+		L"\\\\.\\pipe\\LOCAL\\usernamepipe", 
+		PIPE_ACCESS_DUPLEX, PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT, 
+		PIPE_UNLIMITED_INSTANCES, 
+		256, 
+		256, 
+		0, 
+		NULL
+	);
+
 	if (hNamedPipe == INVALID_HANDLE_VALUE)
 		goto EXIT_ROUTINE;
 
-	hThread = CreateThread(NULL, 0, ThreadStartRoutine, hNamedPipe, 0, NULL);
+	hThread = CreateThread(
+		NULL, 
+		0, 
+		ThreadStartRoutine, 
+		hNamedPipe,
+		0, 
+		NULL
+	);
+
 	if (hThread == NULL)
 		goto EXIT_ROUTINE;
 
-	if (!ConnectNamedPipe(hNamedPipe, NULL))
+	if (!ConnectNamedPipe(
+		hNamedPipe, 
+		NULL))
 		goto EXIT_ROUTINE;
 	else
 		Connected = TRUE;
 
 	WaitForSingleObject(hThread, INFINITE);
 
-	if (!ReadFile(hNamedPipe, &Buffer, 5, &dwRead, NULL))
+	if (!ReadFile(
+		hNamedPipe, 
+		&Buffer, 
+		5, 
+		&dwRead, 
+		NULL))
 		goto EXIT_ROUTINE;
 
-	NpGetUserName(hNamedPipe, username, UserNameLength);
+	NpGetUserName(
+		hNamedPipe, 
+		username, 
+		UserNameLength);
 	std::wcout << username << std::endl;
 
 EXIT_ROUTINE:
+	free(username);
 
 	if (Connected)
 		DisconnectNamedPipe(hNamedPipe);
@@ -83,11 +115,24 @@ DWORD ThreadStartRoutine(LPVOID lpParameter)
 			Sleep(1000);
 	}
 
-	hPipe = CreateFileW(L"\\\\.\\pipe\\LOCAL\\usernamepipe", GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+	hPipe = CreateFileW(
+		L"\\\\.\\pipe\\LOCAL\\usernamepipe", 
+		GENERIC_READ | GENERIC_WRITE,
+		0, 
+		NULL, 
+		OPEN_EXISTING, 
+		0, 
+		NULL);
+
 	if (hPipe == INVALID_HANDLE_VALUE)
 		goto EXIT_ROUTINE;
 
-	WriteFile(hPipe, L"test", 5, &dwSize, NULL);
+	WriteFile(
+		hPipe, 
+		L"test", 
+		5, 
+		&dwSize, 
+		NULL);
 
 EXIT_ROUTINE:
 

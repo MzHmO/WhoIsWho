@@ -18,24 +18,50 @@ void WhoIsWho() {
     HANDLE g_hChildStd_OUT_Rd = NULL;
     HANDLE g_hChildStd_OUT_Wr = NULL;
 
-    if (!CreatePipe(&g_hChildStd_OUT_Rd, &g_hChildStd_OUT_Wr, &saAttr, 0))
+    if (!CreatePipe(
+        &g_hChildStd_OUT_Rd, 
+        &g_hChildStd_OUT_Wr, 
+        &saAttr, 
+        0
+    ))
         ExitProcess(1);
 
-    if (!SetHandleInformation(g_hChildStd_OUT_Rd, HANDLE_FLAG_INHERIT, 0))
+    if (!SetHandleInformation(
+        g_hChildStd_OUT_Rd, 
+        HANDLE_FLAG_INHERIT, 
+        0
+    ))
         ExitProcess(1);
 
     PROCESS_INFORMATION piProcInfo;
-    ZeroMemory(&piProcInfo, sizeof(PROCESS_INFORMATION));
+    ZeroMemory(
+        &piProcInfo, 
+        sizeof(PROCESS_INFORMATION)
+    );
 
     STARTUPINFOA siStartInfo;
-    ZeroMemory(&siStartInfo, sizeof(STARTUPINFO));
+    ZeroMemory(
+        &siStartInfo, 
+        sizeof(STARTUPINFO)
+    );
     siStartInfo.cb = sizeof(STARTUPINFO);
     siStartInfo.hStdOutput = g_hChildStd_OUT_Wr;
     siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
 
     char cmd[] = "whoami.exe"; 
 
-    if (!CreateProcessA(NULL, cmd, NULL, NULL, TRUE, 0, NULL, NULL, &siStartInfo, &piProcInfo)) {
+    if (!CreateProcessA(
+        NULL, 
+        cmd, 
+        NULL, 
+        NULL, 
+        TRUE, 
+        0, 
+        NULL, 
+        NULL, 
+        &siStartInfo, 
+        &piProcInfo))
+    {
         std::cerr << "CreateProcess failed (" << GetLastError() << ").\n";
         return;
     }
@@ -45,9 +71,17 @@ void WhoIsWho() {
     DWORD dwRead;
     CHAR chBuf[4096];
 
-    while (true) {
-        bool success = ReadFile(g_hChildStd_OUT_Rd, chBuf, sizeof(chBuf), &dwRead, NULL);
-        if (!success || dwRead == 0) break;
+    while (true)
+    {
+        bool success = ReadFile(
+            g_hChildStd_OUT_Rd, 
+            chBuf, 
+            sizeof(chBuf), 
+            &dwRead, 
+            NULL
+        );
+        if (!success || dwRead == 0)
+            break;
 
         std::string output(chBuf, dwRead);
         std::cout << output;
